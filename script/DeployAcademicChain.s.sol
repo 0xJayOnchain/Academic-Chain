@@ -11,7 +11,7 @@ contract DeployAcademicChain is Script {
 
         // Deploy the contract
         AcademicChain academicChain = new AcademicChain();
-        
+
         // Stop broadcasting
         vm.stopBroadcast();
 

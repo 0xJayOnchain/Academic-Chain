@@ -25,10 +25,10 @@ contract AcademicChainTest is Test {
     function testAddStudent() public {
         vm.expectEmit(true, false, false, true);
         emit StudentAdded(0, "Alice", 20, studentWallet);
-        
+
         college.addStudent("Alice", 20, payable(studentWallet));
         (string memory name, uint8 age, address wallet,, bool exists) = college.getStudentData(0);
-        
+
         assertEq(name, "Alice");
         assertEq(age, 20);
         assertEq(wallet, studentWallet);
@@ -39,7 +39,7 @@ contract AcademicChainTest is Test {
     function testUpdateStudent() public {
         college.addStudent("Bob", 21, payable(studentWallet));
         college.updateStudent(0, "Bobby", 22, payable(studentWallet));
-        
+
         (string memory name, uint8 age, address wallet,,) = college.getStudentData(0);
         assertEq(name, "Bobby");
         assertEq(age, 22);
@@ -48,20 +48,20 @@ contract AcademicChainTest is Test {
 
     function testCourseManagement() public {
         college.addStudent("Charlie", 20, payable(studentWallet));
-        
+
         vm.expectEmit(true, false, false, true);
         emit CourseAdded(0, "Math", 3, 85);
         college.addCourse(0, "Math", 3, 85);
-        
+
         college.addCourse(0, "Science", 4, 90);
-        
-        (, , ,AcademicChain.Course[] memory courses,) = college.getStudentData(0);
+
+        (,,, AcademicChain.Course[] memory courses,) = college.getStudentData(0);
         assertEq(courses.length, 2);
         assertEq(courses[0].name, "Math");
         assertEq(courses[1].name, "Science");
-        
+
         college.removeCourse(0, 0);
-        (, , ,courses,) = college.getStudentData(0);
+        (,,, courses,) = college.getStudentData(0);
         assertEq(courses.length, 1);
         assertEq(courses[0].name, "Science");
     }
@@ -70,7 +70,7 @@ contract AcademicChainTest is Test {
         college.addStudent("David", 20, payable(studentWallet));
         college.addCourse(0, "Math", 3, 85);
         college.addCourse(0, "Science", 4, 90);
-        
+
         uint256 gpa = college.getGPA(0);
         assertEq(gpa, 8785); // (255 + 360) * 100 / 7 ≈ 8785
     }
@@ -78,10 +78,10 @@ contract AcademicChainTest is Test {
     function testAdminManagement() public {
         college.addAdmin(anotherAdmin);
         assertTrue(college.hasRole(college.ADMIN_ROLE(), anotherAdmin));
-        
+
         vm.prank(anotherAdmin);
         college.addStudent("Eve", 19, payable(address(0x3)));
-        
+
         college.removeAdmin(anotherAdmin);
         assertFalse(college.hasRole(college.ADMIN_ROLE(), anotherAdmin));
     }
